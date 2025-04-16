@@ -81,6 +81,7 @@ export class Configuration {
     formDataCtor?: new () => any;
 
     constructor(param: ConfigurationParameters = {}) {
+        console.log(process.env.SMALLEST_API_KEY);
         this.apiKey = param.apiKey;
         this.username = param.username;
         this.password = param.password;

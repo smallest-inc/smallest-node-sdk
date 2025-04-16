@@ -12,7 +12,7 @@
  */
 
 
-import type { Configuration } from '../util/configuration';
+import { Configuration } from '../util/configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
@@ -53,6 +53,10 @@ export class BaseAPI {
         if (configuration) {
             this.configuration = configuration;
             this.basePath = configuration.basePath ?? basePath;
+        }
+        else {
+            this.configuration = new Configuration({});
+            this.basePath = this.configuration.basePath ?? basePath;
         }
     }
 };

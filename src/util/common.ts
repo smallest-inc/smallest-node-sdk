@@ -12,7 +12,7 @@
  */
 
 
-import type { Configuration } from "./configuration";
+import { Configuration } from "./configuration";
 import type { RequestArgs } from "../waves/base";
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import { RequiredError } from "../waves/base";

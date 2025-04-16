@@ -1,4 +1,4 @@
-import { Configuration } from './configuration';
+import { Configuration } from '../util/configuration';
 import { LightningApi } from './api';
 import { LightningLargeApi } from './api';
 import { VoiceCloningApi } from './api';

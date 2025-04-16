@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WavesClient } from '../../waves/WavesClient';
-import { Configuration } from '../../waves/configuration';
+import { Configuration } from '../../util/configuration';
 import { LightningLargeRequest } from '../../waves/api';
 const fs = require('fs');
 import { AxiosResponse } from 'axios';
@@ -48,30 +48,30 @@ describe.only('LightningLarge', () => {
 
   const wavesClient = new WavesClient(configuration);
 
-  // it('should synthesize speech and return audio file', async () => {
-  //   try {
-  //     const request: LightningLargeRequest = {
-  //       text: 'Hello, this is a test',
-  //       voice_id: 'roma',
-  //       add_wav_header: true,
-  //       sample_rate: 24000,
-  //       speed: 1.0,
-  //       language: 'en',
-  //       consistency: 0.5,
-  //       similarity: 0.5,
-  //       enhancement: 1
-  //     };
+  it('should synthesize speech and return audio file', async () => {
+    try {
+      const request: LightningLargeRequest = {
+        text: 'Hello, this is a test',
+        voice_id: 'roma',
+        add_wav_header: true,
+        sample_rate: 24000,
+        speed: 1.0,
+        language: 'en',
+        consistency: 0.5,
+        similarity: 0.5,
+        enhancement: 1
+      };
 
-  //     const response = await wavesClient.synthesizeLightningLargeSpeech(request);
+      const response = await wavesClient.synthesizeLightningLargeSpeech(request);
 
-  //     const blob = response.data;
-  //     // expect(blob).toBeInstanceOf(Blob);
-  //     // expect(blob.type).toBe('audio/wav');
-  //   } catch (error) {
-  //     console.error('Error in synthesizeLightningLargeSpeech test:', error);
-  //     throw error;
-  //   }
-  // });
+      const blob = response.data;
+      // expect(blob).toBeInstanceOf(Blob);
+      // expect(blob.type).toBe('audio/wav');
+    } catch (error) {
+      console.error('Error in synthesizeLightningLargeSpeech test:', error);
+      throw error;
+    }
+  });
 
   it('should stream speech synthesis', async () => {
     try {
@@ -91,6 +91,7 @@ describe.only('LightningLarge', () => {
       
       expect(response.status).toBe(200);
       expect(response.headers['content-type']).toBe('text/event-stream');
+      // sanity check: test the saved audio file manually
       await save(response);
     } catch (error) {
       console.error('Error in streamLightningLargeSpeech test:', error);

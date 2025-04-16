@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Agent Management API
- * API for managing agents, their templates, and call logs
+ * Get Voices
+ * API Endpoint to get voices supported by our models. Currently featuring our two models, Lightning & Lightning Large, with more models coming soon. 
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -14,9 +14,9 @@
 
 
 import type { Configuration } from "./configuration";
-import type { RequestArgs } from "./base";
+import type { RequestArgs } from "../waves/base";
 import type { AxiosInstance, AxiosResponse } from 'axios';
-import { RequiredError } from "./base";
+import { RequiredError } from "../waves/base";
 
 /**
  *

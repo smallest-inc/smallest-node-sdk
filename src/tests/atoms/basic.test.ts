@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { AtomsClient } from '../../atoms/AtomsClient';
-import { Configuration } from '../../atoms/configuration';
+import { Configuration } from '../../util/configuration';
 import { AgentDTO, GetAgents200Response, GetCurrentUser200Response } from '../../atoms/api';
 import Ajv from 'ajv';
 import type { JSONSchemaType } from 'ajv';

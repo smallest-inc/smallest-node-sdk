@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WavesClient } from '../../waves/WavesClient';
-import { Configuration } from '../../waves/configuration';
+import { Configuration } from '../../util/configuration';
 import * as fs from 'fs';
 import { Readable } from 'stream';
 import Ajv from 'ajv';

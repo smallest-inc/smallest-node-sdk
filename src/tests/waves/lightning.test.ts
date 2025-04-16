@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WavesClient } from '../../waves/WavesClient';
-import { Configuration } from '../../waves/configuration';
+import { Configuration } from '../../util/configuration';
 import { LightningRequest } from '../../waves/api';
 import { WaveFile } from 'wavefile';
 
@@ -24,7 +24,9 @@ describe('Lightning', () => {
       };
 
       const response = await wavesClient.synthesizeLightningSpeech(request);
-      
+      expect(response.data).toBeDefined();
+
+      // sanity check: test the saved audio file manually
       const fs = require('fs');
       const outputPath = './test-output.wav';
       fs.writeFileSync(outputPath, response.data);
@@ -46,7 +48,9 @@ describe('Lightning', () => {
       };
 
       const response = await wavesClient.synthesizeLightningSpeech(request);
-      
+      expect(response.data).toBeDefined();
+
+      // sanity check: test the saved audio file manually
       const fs = require('fs');
       const outputPath = './test-output-no-wav-header.wav';
 

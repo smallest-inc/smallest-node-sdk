@@ -1,4 +1,4 @@
-import { Configuration } from './configuration';
+import { Configuration } from '../util/configuration';
 import { AgentTemplatesApi } from './api';
 import { AgentsApi } from './api';
 import { CallsApi } from './api';

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WavesClient } from '../../waves/WavesClient';
-import { Configuration } from '../../waves/configuration';
+import { Configuration } from '../../util/configuration';
 import { GetWavesVoices200Response, GetWavesVoicesModelEnum } from '../../waves/api';
 import Ajv from 'ajv';
 import type { JSONSchemaType } from 'ajv';

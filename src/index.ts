@@ -14,6 +14,6 @@
 
 export * from "./atoms/api";
 export * from "./atoms/AtomsClient";
-export * from "./waves/configuration";
+export * from "./util/configuration";
 export * from "./waves/api";
 export * from "./waves/WavesClient";

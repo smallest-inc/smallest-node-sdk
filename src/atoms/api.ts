@@ -13,7 +13,7 @@
  */
 
 
-import type { Configuration } from './configuration';
+import type { Configuration } from '../util/configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions

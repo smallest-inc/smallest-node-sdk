@@ -1,5 +1,5 @@
 {
-  "name": "atoms",
+  "name": "smallestai",
   "version": "1.0.0",
   "description": "OpenAPI client for atoms",
   "author": "OpenAPI-Generator Contributors",
@@ -8,11 +8,13 @@
     "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
   },
   "keywords": [
-    "axios",
     "typescript",
-    "openapi-client",
-    "openapi-generator",
-    "atoms"
+    "smallestai",
+    "voice agents",
+    "text-to-speech",
+    "tts",
+    "atoms",
+    "waves"
   ],
   "license": "Unlicense",
   "main": "./dist/index.js",

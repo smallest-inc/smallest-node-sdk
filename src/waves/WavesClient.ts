@@ -31,16 +31,8 @@ export class WavesClient extends BaseAPI {
         this.voicesApi = new VoicesApi(configuration);
     }
 
-    public synthesizeLightningSpeechRaw(lightningRequest: LightningRequest, options?: RawAxiosRequestConfig): AxiosPromise<File> {
-        return this.lightningApi.synthesizeLightningSpeech(lightningRequest, options);
-    }
-
-    public streamLightningLargeSpeech(lightningLargeRequest: LightningLargeRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-        return this.lightningLargeApi.streamLightningLargeSpeech(lightningLargeRequest, options);
-    }  
-
-    private synthesizeLightningLargeSpeechRaw(lightningLargeRequest: LightningLargeRequest, options?: RawAxiosRequestConfig): AxiosPromise<File> {
-        return this.lightningLargeApi.synthesizeLightningLargeSpeech(lightningLargeRequest, options);
+    public synthesizeStream(lightningLargeRequest: LightningLargeRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        return this.lightningLargeApi.streamLightningLargeSpeech(lightningLargeRequest, { ...options, responseType: 'stream' });
     }
 
     public addVoiceToModel(displayName: string, file: File, options?: RawAxiosRequestConfig): AxiosPromise<any> {
@@ -121,7 +113,7 @@ export class WavesClient extends BaseAPI {
      * Synthesizes speech from text using Lightning API, handling long text by chunking
      * @public
      */
-    public synthesizeLightningSpeech(
+    private synthesizeLightningSpeech(
         request: LightningRequest,
         options?: RawAxiosRequestConfig
     ): AxiosPromise<ArrayBuffer> {
@@ -131,7 +123,7 @@ export class WavesClient extends BaseAPI {
         return Promise.all(chunks.map(chunk => {
             const chunkRequest = { ...request, text: chunk, add_wav_header: false };
             const refinedOptions = { ...options, responseType: 'arraybuffer' as const };
-            return this.synthesizeLightningSpeechRaw(chunkRequest, refinedOptions);
+            return this.lightningApi.synthesizeLightningSpeech(chunkRequest, refinedOptions);
         })).then(responses => {
             responses.forEach(response => audioBuffers.push(response.data as unknown as ArrayBuffer));
             return this.combineAudioBuffers(audioBuffers, request.add_wav_header, request.sample_rate);
@@ -144,7 +136,7 @@ export class WavesClient extends BaseAPI {
      * Synthesizes speech from text using LightningLarge API, handling long text by chunking
      * @public
      */
-    public synthesizeLightningLargeSpeech(
+    private synthesizeLightningLargeSpeech(
         request: LightningLargeRequest,
         options?: RawAxiosRequestConfig
     ): AxiosPromise<ArrayBuffer> {
@@ -154,12 +146,28 @@ export class WavesClient extends BaseAPI {
         return Promise.all(chunks.map(chunk => {
             const chunkRequest = { ...request, text: chunk, add_wav_header: false };
             const refinedOptions = { ...options, responseType: 'arraybuffer' as const };
-            return this.synthesizeLightningLargeSpeechRaw(chunkRequest, refinedOptions);
+            return this.lightningLargeApi.synthesizeLightningLargeSpeech(chunkRequest, refinedOptions);
         })).then(responses => {
             responses.forEach(response => audioBuffers.push(response.data as unknown as ArrayBuffer));
             return this.combineAudioBuffers(audioBuffers, request.add_wav_header, request.sample_rate);
         }).then(finalBuffer => {
             return Promise.resolve({ data: finalBuffer } as AxiosResponse<ArrayBuffer>);
         });
+    }
+
+    /**
+     * Generic synthesize function that handles both Lightning and LightningLarge requests
+     * @public
+     */
+    public synthesize(
+        model: 'lightning' | 'lightning-large',
+        request: LightningRequest | LightningLargeRequest,
+        options?: RawAxiosRequestConfig
+    ): AxiosPromise<ArrayBuffer> {
+        if (model === 'lightning') {
+            return this.synthesizeLightningSpeech(request as LightningRequest, options);
+        } else {
+            return this.synthesizeLightningLargeSpeech(request as LightningLargeRequest, options);
+        }
     }
 }

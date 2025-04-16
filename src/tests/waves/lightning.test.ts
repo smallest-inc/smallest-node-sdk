@@ -23,7 +23,7 @@ describe('Lightning', () => {
         language: 'en'
       };
 
-      const response = await wavesClient.synthesizeLightningSpeech(request);
+      const response = await wavesClient.synthesize("lightning", request);
       expect(response.data).toBeDefined();
 
       // sanity check: test the saved audio file manually
@@ -47,7 +47,7 @@ describe('Lightning', () => {
         language: 'en'
       };
 
-      const response = await wavesClient.synthesizeLightningSpeech(request);
+      const response = await wavesClient.synthesize("lightning", request);
       expect(response.data).toBeDefined();
 
       // sanity check: test the saved audio file manually

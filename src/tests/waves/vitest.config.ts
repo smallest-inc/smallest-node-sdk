@@ -3,9 +3,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     typecheck: {
-      include: ['./tests/**/*.ts'], 
+      include: ['.src/tests/**/*.ts'], 
     },
     testTimeout: 100000,
-    include: ['./tests/waves/**/*.test.ts']
+    include: ['./src/tests/waves/**/*.test.ts']
   },
 });

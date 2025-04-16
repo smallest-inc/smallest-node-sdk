@@ -62,7 +62,7 @@ describe.only('LightningLarge', () => {
         enhancement: 1
       };
 
-      const response = await wavesClient.synthesizeLightningLargeSpeech(request);
+      const response = await wavesClient.synthesize("lightning-large", request);
 
       const blob = response.data;
       // expect(blob).toBeInstanceOf(Blob);
@@ -87,7 +87,7 @@ describe.only('LightningLarge', () => {
         enhancement: 1
       };
 
-      const response = await wavesClient.streamLightningLargeSpeech(request, { responseType: 'stream' });
+      const response = await wavesClient.synthesizeStream(request);
       
       expect(response.status).toBe(200);
       expect(response.headers['content-type']).toBe('text/event-stream');

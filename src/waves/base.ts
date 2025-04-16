@@ -1,9 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Get Voices
- * API Endpoint to get voices supported by our models. Currently featuring our two models, Lightning & Lightning Large, with more models coming soon. 
- *
+ * Waves Management API
+ * API for managing waves *
  * The version of the OpenAPI document: 1.0.0
  * 
  *

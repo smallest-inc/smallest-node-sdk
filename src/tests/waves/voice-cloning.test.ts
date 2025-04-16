@@ -82,9 +82,9 @@ describe('Voice Cloning', () => {
 
   it('should add a new voice and validate response structure', async () => {
     try {
-      const filePath = './tests/waves/voice-for-cloning.wav';
+      const filePath = './src/tests/waves/voice-for-cloning.wav';
       const fileContent = fs.readFileSync(filePath);
-      const file = new File([fileContent], './tests/waves/voice-for-cloning.wav', { type: 'audio/wav' });
+      const file = new File([fileContent], filePath, { type: 'audio/wav' });
 
       const response = await wavesClient.addVoiceToModel('Test Voice', file, {});
       
@@ -119,7 +119,7 @@ describe('Voice Cloning', () => {
       // Create a FormData object for adding test voice
       const formData = new FormData();
       formData.append('displayName', 'Test Voice');
-      const fileStream = fs.createReadStream('./tests/waves/voice-for-cloning.wav');
+      const fileStream = fs.createReadStream('./src/tests/waves/voice-for-cloning.wav');
       formData.append('file', fileStream);
 
       // Add a new voice first that we'll then delete
@@ -137,7 +137,6 @@ describe('Voice Cloning', () => {
 
       const voiceIdToDelete = addResponse.data.data.voiceId;
 
-      // Now proceed with delete test using the created voice ID
       const response = await wavesClient.deleteVoiceClone({ voiceId: voiceIdToDelete });
       
       const isValid = validateDeleteVoice(response.data);

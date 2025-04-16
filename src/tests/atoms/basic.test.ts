@@ -7,7 +7,6 @@ import type { JSONSchemaType } from 'ajv';
 
 describe('Atoms', () => {
   const configuration = new Configuration({
-    accessToken: process.env.SMALLEST_API_KEY,
     basePath: 'https://atoms-api.dev.smallest.ai/api/v1'
   });
 

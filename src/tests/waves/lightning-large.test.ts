@@ -42,7 +42,6 @@ async function save(response: AxiosResponse) {
 
 describe.only('LightningLarge', () => {
   const configuration = new Configuration({
-    accessToken: process.env.SMALLEST_API_KEY,
     basePath: 'https://waves-api.smallest.ai'
   });
 

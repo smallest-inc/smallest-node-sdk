@@ -16,7 +16,6 @@ declare global {
 
 describe('Voice Cloning', () => {
   const configuration =  new Configuration({
-    accessToken: process.env.SMALLEST_API_KEY,
     basePath: 'https://waves-api.smallest.ai'
   });
 

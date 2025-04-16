@@ -69,8 +69,6 @@ When using an SDK in your application, make sure to pin to at least the major ve
 
 Atoms are agents that can talk to anyone on voice or text in any language, in any voice. Imagine an AI that you can hire to perform end-to-end tasks for your business. The following examples give an overview of how AtomsClient leverages abstractions such as KnowledgeBase, Campaigns and graph-based Workflows to let you build the smartest voice agent for your usecase.
 
-You can find the full reference for Atoms [here](./docs/atoms/Api.md).
-
 ### Creating your first Agent
 
 ```python
@@ -189,7 +187,7 @@ To manage bulk calls, you can use [Atoms platform](https://atoms.smallest.ai/das
 A synchronous text-to-speech synthesis client. 
 
 **Basic Usage:**   
-```python
+```javascript
 
 from smallestai.waves import WavesClient
 

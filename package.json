@@ -1,11 +1,11 @@
 {
   "name": "smallestai",
   "version": "1.0.0",
-  "description": "OpenAPI client for atoms",
-  "author": "OpenAPI-Generator Contributors",
+  "description": "Official node SDK for Smallest AI",
+  "author": "Smallest AI",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
+    "url": "https://github.com/smallest-inc/smallest-node-sdk.git"
   },
   "keywords": [
     "typescript",

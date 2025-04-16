@@ -36,15 +36,10 @@ To learn how to use our API's, check out our documentation for [Atoms](https://a
 - [Getting started with Waves](#getting-started-with-waves)
   - [Best Practices for Input Text](#best-practices-for-input-text)
   - [Examples](#examples)
-    - [Synchronous](#synchronous)
-    - [Asynchronous](#asynchronous)
-    - [LLM to Speech](#llm-to-speech)
+    - [Speech synthesis](#speech-synthesis)
+    - [Streaming speech synthesis](#streaming-speech-synthesis)
     - [Add your Voice](#add-your-voice)
-      - [Synchronously](#add-synchronously)
-      - [Asynchronously](#add-asynchronously)
     - [Delete your Voice](#delete-your-voice)
-      - [Synchronously](#delete-synchronously)
-      - [Asynchronously](#delete-asynchronously)
   - [Available Methods](#available-methods)
   - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
@@ -71,101 +66,96 @@ Atoms are agents that can talk to anyone on voice or text in any language, in an
 
 ### Creating your first Agent
 
-```python
-from smallestai.atoms import AtomsClient
-from smallestai.atoms import Configuration
+```typescript
+import { AtomsClient, Configuration } from 'smallestai';
 
-TARGET_PHONE_NUMBER = "+919666666666"
- 
-def main():
-    # alternatively, you can export API Key as environment variable SMALLEST_API_KEY. 
-    config = Configuration(
-        access_token = 'SMALLEST_API_KEY' 
-    )
+const TARGET_PHONE_NUMBER = "+919666666666";
 
-    atoms_client = AtomsClient(config)
+async function main() {
+    // alternatively, you can export API Key as environment variable SMALLEST_API_KEY. 
+    const config = new Configuration({
+        accessToken: 'SMALLEST_API_KEY'
+    });
 
-    agent_id = atoms_client.create_agent(
-        create_agent_request={
-            "name": "Atoms Multi-Modal Agent",
-            "description": "My first atoms agent",
-            "language": {
-                "enabled": "en",
-                "switching": False
+    const atomsClient = new AtomsClient(config);
+
+    const agentId = await atomsClient.createAgent({
+        name: "Atoms Multi-Modal Agent",
+        description: "My first atoms agent",
+        language: {
+            enabled: "en",
+            switching: false
+        },
+        synthesizer: {
+            voiceConfig: {
+                model: "waves_lightning_large",
+                voiceId: "nyah"
             },
-            "synthesizer": {
-                "voiceConfig": {
-                    "model": "waves_lightning_large",
-                    "voiceId": "nyah"
-                },
-                "speed": 1.2,
-                "consistency": 0.5,
-                "similarity": 0,
-                "enhancement": 1
-            },
-            "slmModel": "electron-v1",
-        }
-    )
+            speed: 1.2,
+            consistency: 0.5,
+            similarity: 0,
+            enhancement: 1
+        },
+        slmModel: "electron-v1"
+    });
     
-    print(f"Successfully created agent with id: {agent_id}")
+    console.log(`Successfully created agent with id: ${agentId}`);
+}
 
-if __name__ == "__main__":
-    main()
+main().catch(console.error);
 ```
 
 ### Placing an outbound call
 
-```python
-from smallestai.atoms import AtomsClient
+```typescript
+import { AtomsClient } from 'smallestai';
 
-TARGET_PHONE_NUMBER = "+919666666666"
-MY_AGENT_ID = "67e****ff*ec***82*3c9e**"
+const TARGET_PHONE_NUMBER = "+919666666666";
+const MY_AGENT_ID = "67e****ff*ec***82*3c9e**";
 
-def main():
-    # assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
-    atoms_client = AtomsClient()
+async function main() {
+    // assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
+    const atomsClient = new AtomsClient();
 
-    call_response = atoms_client.start_outbound_call(
-        start_outbound_call_request={
-            "agent_id": MY_AGENT_ID,
-            "phone_number": TARGET_PHONE_NUMBER,
-        }
-    )
-    print(f"Successfully placed call with id: {call_response.conversation_id}")
-           
-if __name__ == "__main__":
-    main()
+    const callResponse = await atomsClient.startOutboundCall({
+        agentId: MY_AGENT_ID,
+        phoneNumber: TARGET_PHONE_NUMBER
+    });
+    
+    console.log(`Successfully placed call with id: ${callResponse.conversationId}`);
+}
+
+main().catch(console.error);
 ```
+
 ### Providing context to the agent
 
 An agent can be attached to a knowledge base, which it can look up during conversations. Here is how you can do it:
 
-```python
-from smallestai.atoms import AtomsClient
+```typescript
+import { AtomsClient } from 'smallestai';
+import * as fs from 'fs';
 
-def main():
-    # assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
-    atoms_client = AtomsClient()
+async function main() {
+    // assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
+    const atomsClient = new AtomsClient();
     
-    # Create a new knowledge base
-    knowledge_base_id = atoms_client.create_knowledge_base(
-        create_knowledge_base_request={
-            "name": "Customer Support Knowledge Base",
-            "description": "Contains FAQs and product information"
-        }
-    )
+    // Create a new knowledge base
+    const knowledgeBaseId = await atomsClient.createKnowledgeBase({
+        name: "Customer Support Knowledge Base",
+        description: "Contains FAQs and product information"
+    });
 
-    with open("product_manual.pdf", "rb") as f:
-        media_content = f.read()
-        media_response = atoms_client.upload_media_to_knowledge_base(
-            id=knowledge_base_id,
-            media=media_content
-        )
-    print("Added product_manual.pdf to knowledge base")
+    const mediaContent = fs.readFileSync("product_manual.pdf");
+    await atomsClient.uploadMediaToKnowledgeBase(
+        knowledgeBaseId,
+        mediaContent
+    );
+    console.log("Added product_manual.pdf to knowledge base");
+}
 
-if __name__ == "__main__":
-    main()
- ```   
+main().catch(console.error);
+```
 
 ### Configuring workflows to drive conversations
 
@@ -183,299 +173,173 @@ To manage bulk calls, you can use [Atoms platform](https://atoms.smallest.ai/das
 
 ### Examples
 
-#### Synchronous  
-A synchronous text-to-speech synthesis client. 
+#### Speech Synthesis
+
+A text-to-speech synthesis client. 
 
 **Basic Usage:**   
-```javascript
+```typescript
+import { WavesClient, Configuration } from 'smallestai';
 
-from smallestai.waves import WavesClient
+function main() {
+    // alternatively, you can export API Key as environment variable SMALLEST_API_KEY. 
+    const config = new Configuration({
+        accessToken: 'SMALLEST_API_KEY'
+    });
 
-def main():
-    waves_client = WavesClient(api_key="SMALLEST_API_KEY")
-    waves_client.synthesize(
-        text="Hello, this is a test for sync synthesis function.",
-        save_as="sync_synthesize.wav"
-    )
+    const wavesClient = new WavesClient(config);
+    wavesClient.synthesize("lightning", {
+        text: "Hello, this is a test for sync synthesis function.",
+        voice_id: "emily",
+        add_wav_header: true,
+        sample_rate: 24000,
+        speed: 1.0
+    });
+}
 
-if __name__ == "__main__":
-    main()
+main();
 ```
 
 **Parameters:**   
-- `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
+- `accessToken`: Your API key (can be set via SMALLEST_API_KEY environment variable)
 - `model`: TTS model to use (default: "lightning")
 - `sample_rate`: Audio sample rate (default: 24000)
 - `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
 - `consistency`: Controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model. (default: 0.5)
 - `similarity`: Controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model. (default: 0)
-- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. (default: False)
+- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. (default: false)
 - `add_wav_header`: Whether to add a WAV header to the output audio.
 
-These parameters are part of the `Smallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override these parameters for a specific synthesis request.
+These parameters are part of the `WavesClient` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts an options object, allowing you to override these parameters for a specific synthesis request.
 
 For example, you can modify the speech speed and sample rate just for a particular synthesis call:  
-```py
-client.synthesize(
-    "Hello, this is a test for sync synthesis function.",
-    save_as="sync_synthesize.wav",
-    speed=1.5,  # Overrides default speed
-    sample_rate=16000  # Overrides default sample rate
-)
+```typescript
+wavesClient.synthesize("lightning", {
+    text: "Hello, this is a test for sync synthesis function.",
+    voice_id: "emily",
+    add_wav_header: true,
+    sample_rate: 16000,  // Overrides default sample rate
+    speed: 1.5  // Overrides default speed
+});
 ```
 
+#### Streaming Speech Synthesis
 
-#### Asynchronous   
-Asynchronous text-to-speech synthesis client.    
+The Waves API supports streaming speech synthesis, which is particularly useful for applications that require real-time audio output.
 
-**Basic Usage:**   
-```python
-import asyncio
-import aiofiles
-from smallestai.waves import AsyncWavesClient
+```typescript
+import { WavesClient, Configuration } from 'smallestai';
+import { createParser } from 'eventsource-parser';
+import { WaveFile } from 'wavefile';
+import * as fs from 'fs';
 
-async def main():
-    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
-    async with client as tts:
-        audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
-        async with aiofiles.open("async_synthesize.wav", "wb") as f:
-            await f.write(audio_bytes) # alternatively you can use the `save_as` parameter.
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-**Running Asynchronously in a Jupyter Notebook**   
-If you are using a Jupyter Notebook, use the following approach to execute the asynchronous function within an existing event loop:
-```python
-import asyncio
-import aiofiles
-from smallestai.waves import AsyncWavesClient
-
-async def main():
-    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
-    async with client as tts:
-        audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
-        async with aiofiles.open("async_synthesize.wav", "wb") as f:
-            await f.write(audio_bytes) # alternatively you can use the `save_as` parameter.
-
-await main()
-```
-
-**Parameters:**    
-- `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
-- `model`: TTS model to use (default: "lightning")
-- `sample_rate`: Audio sample rate (default: 24000)
-- `voice_id`: Voice ID (default: "emily")
-- `speed`: Speech speed multiplier (default: 1.0)
-- `consistency`: Controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
-- `similarity`: Controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model.
-- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
-- `add_wav_header`: Whether to add a WAV header to the output audio.
-
-These parameters are part of the `AsyncSmallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override any of these parameters on a per-request basis.  
-
-For example, you can modify the speech speed and sample rate just for a particular synthesis request:  
-```py
-audio_bytes = await tts.synthesize(
-    "Hello, this is a test of the async synthesis function.",
-    speed=1.5,  # Overrides default speed
-    sample_rate=16000  # Overrides default sample rate
-)
-```
-
-#### LLM to Speech    
-
-The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
-
-##### Stream through a WebSocket
-
-```python
-import asyncio
-import websockets
-from groq import Groq
-from smallestai.waves import WavesClient, TextToAudioStream  
-
-# Initialize Groq (LLM) and Smallest (TTS) instances
-llm = Groq(api_key="GROQ_API_KEY")
-tts = WavesClient(api_key="SMALLEST_API_KEY")
-WEBSOCKET_URL = "wss://echo.websocket.events" # Mock WebSocket server
-
-# Async function to stream text generation from LLM
-async def generate_text(prompt):
-    completion = llm.chat.completions.create(
-        messages=[{"role": "user", "content": prompt}],
-        model="llama3-8b-8192",
-        stream=True,
-    )
-
-    # Yield text as it is generated
-    for chunk in completion:
-        text = chunk.choices[0].delta.content
-        if text:
-            yield text
-
-# Main function to run the process
-async def main():
-    # Initialize the TTS processor
-    processor = TextToAudioStream(tts_instance=tts)
-
-    # Generate text from LLM
-    llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
-
-    # Stream the generated speech throught a websocket
-    async with websockets.connect(WEBSOCKET_URL) as ws:
-        print("Connected to WebSocket server.")
-
-        # Stream the generated speech
-        async for audio_chunk in processor.process(llm_output):
-            await ws.send(audio_chunk)  # Send audio chunk
-            echoed_data = await ws.recv()  # Receive the echoed message
-            print("Received from server:", echoed_data[:20], "...")  # Print first 20 bytes
-
-        print("WebSocket connection closed.")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-##### Save to a File
-```python
-import wave
-import asyncio
-from groq import Groq
-from smallestai.waves import WavesClient, TextToAudioStream
-
-llm = Groq(api_key="GROQ_API_KEY")
-tts = WavesClient(api_key="SMALLEST_API_KEY")
-
-async def generate_text(prompt):
-    """Async generator for streaming text from Groq. You can use any LLM"""
-    completion = llm.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
+async function saveStreamToWav(response: any, outputPath: string) {
+    return new Promise((resolve, reject) => {
+        const chunks: Buffer[] = [];
+        const parser = createParser({
+            onEvent: async (event: any) => {
+                if (event.event === 'chunk') {
+                    const data = JSON.parse(event.data);
+                    const chunk = Buffer.from(data.audio, 'base64');
+                    chunks.push(chunk);
+                }
             }
-        ],
-        model="llama3-8b-8192",
-        stream=True,
-    )
+        });
 
-    for chunk in completion:
-        text = chunk.choices[0].delta.content
-        if text is not None:
-            yield text
+        response.data.on('data', (chunk: Buffer) => parser.feed(chunk.toString()));
 
-async def save_audio_to_wav(file_path, processor, llm_output):
-    with wave.open(file_path, "wb") as wav_file:
-        wav_file.setnchannels(1)
-        wav_file.setsampwidth(2) 
-        wav_file.setframerate(24000)
-        
-        async for audio_chunk in processor.process(llm_output):
-            wav_file.writeframes(audio_chunk)
+        response.data.on('end', () => {
+            const concat = Buffer.concat(chunks);
+            const wav = new WaveFile();
+            wav.fromScratch(1, 24000, '16', new Int16Array(concat.buffer));
+            fs.writeFileSync(outputPath, wav.toBuffer());
+            resolve(true);
+        });
 
-async def main():
-    # Initialize the TTS processor with the TTS instance
-    processor = TextToAudioStream(tts_instance=tts)
-    
-    # Generate text asynchronously and process it
-    llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
-    
-    # As an example, save the generated audio to a WAV file.
-    await save_audio_to_wav("llm_to_speech.wav", processor, llm_output)
+        response.data.on('error', (error: Error) => {
+            console.error('Error processing stream:', error);
+            reject(error);
+        });
+    });
+}
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async function main() {
+    const config = new Configuration({
+        accessToken: 'SMALLEST_API_KEY'
+    });
+
+    const wavesClient = new WavesClient(config);
+
+    const request = {
+        text: 'Hello, I am Roma. How are you doing today? I will be happy to assist you in planning your day, go through your schedule, and help you with any other tasks you need.',
+        voice_id: 'roma',
+        add_wav_header: true,
+        sample_rate: 24000,
+        speed: 1.0,
+        language: 'en',
+        consistency: 0.5,
+        similarity: 0.5,
+        enhancement: 1
+    };
+
+    const response = await wavesClient.synthesizeStream(request);
+    await saveStreamToWav(response, 'streamed_audio.wav');
+}
+
+main().catch(console.error);
 ```
-
-**Parameters:**   
-
-- `tts_instance`: Text-to-speech engine (Smallest or AsyncSmallest)
-- `queue_timeout`: Wait time for new text (seconds, default: 5.0)
-- `max_retries`: Number of retry attempts for failed synthesis (default: 3)
-
-**Output Format:**   
-The processor yields raw audio data chunks without WAV headers for streaming efficiency. These chunks can be:
-
-- Played directly through an audio device
-- Saved to a file
-- Streamed over a network
-- Further processed as needed
 
 #### Add your Voice   
 The Smallest AI SDK allows you to clone your voice by uploading an audio file. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.  
 
-##### Add Synchronously
-```python
-from smallestai.waves import WavesClient
+```typescript
+import { WavesClient, Configuration } from 'smallestai';
 
-def main():
-    client = WavesClient(api_key="SMALLEST_API_KEY")
-    res = client.add_voice(display_name="My Voice", file_path="my_voice.wav")
-    print(res)
+function main() {
+    const config = new Configuration({
+        accessToken: 'SMALLEST_API_KEY'
+    });
+    const client = new WavesClient(config);
+    const res = client.addVoiceToModel("My Voice", new File(["my_voice.wav"], "my_voice.wav"));
+    console.log(res);
+}
 
-if __name__ == "__main__":
-    main()
-```  
-
-##### Add Asynchronously
-```python
-import asyncio
-from smallestai.wavws import AsyncWavesClient
-
-async def main():
-    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
-    res = await client.add_voice(display_name="My Voice", file_path="my_voice.wav")
-    print(res)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+main();
 ```
 
 #### Delete your Voice
-The Smallest AI SDK allows you to delete your cloned voice. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.
+The Smallest AI SDK allows you to delete your cloned voice. Below are examples of how to use this functionality.
 
-##### Delete Synchronously
-```python
-from smallestai.waves import WavesClient
+```typescript
+import { WavesClient, Configuration } from 'smallestai';
 
-def main():
-    client = WavesClient(api_key="SMALLEST_API_KEY")
-    res = client.delete_voice(voice_id="voice_id")
-    print(res)
+function main() {
+    const config = new Configuration({
+        accessToken: 'SMALLEST_API_KEY'
+    });
+    const client = new WavesClient(config);
+    const res = client.deleteVoiceClone({
+        voiceId: "voice_id"
+    });
+    console.log(res);
+}
 
-if __name__ == "__main__":
-    main()
-```
-
-##### Delete Asynchronously
-```python
-import asyncio
-from smallestai.waves import AsyncWavesClient
-
-async def main():
-    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
-    res = await client.delete_voice(voice_id="voice_id")
-    print(res)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+main();
 ```
 
 #### Available Methods
 
-```python
-from smallest import Smallest
+```typescript
+import { WavesClient, Configuration } from 'smallestai';
 
-client = Smallest(api_key="SMALLEST_API_KEY")
+const config = new Configuration({
+    accessToken: 'SMALLEST_API_KEY'
+});
+const client = new WavesClient(config);
 
-print(f"Available Languages: {client.get_languages()}")
-print(f"Available Voices: {client.get_voices(model='lightning')}")
-print(f"Available Voices: {client.get_cloned_voices()}")
-print(f"Available Models: {client.get_models()}")
+console.log(`Available Voices: ${client.getWavesVoices('lightning')}`);
+console.log(`Available Voices: ${client.getClonedVoices()}`);
 ```
 
 #### Technical Note: WAV Headers in Streaming Audio

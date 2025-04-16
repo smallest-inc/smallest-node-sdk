@@ -79,7 +79,7 @@ async function main() {
 
     const atomsClient = new AtomsClient(config);
 
-    const agentId = await atomsClient.createAgent({
+    const agentCreateResponse = await atomsClient.createAgent({
         name: "Atoms Multi-Modal Agent",
         description: "My first atoms agent",
         language: {
@@ -99,6 +99,7 @@ async function main() {
         slmModel: "electron-v1"
     });
     
+    cosnt agentId = agentCreateResponse.data;
     console.log(`Successfully created agent with id: ${agentId}`);
 }
 
@@ -122,7 +123,7 @@ async function main() {
         phoneNumber: TARGET_PHONE_NUMBER
     });
     
-    console.log(`Successfully placed call with id: ${callResponse.conversationId}`);
+    console.log(`Successfully placed call with id: ${callResponse.data.conversationId}`);
 }
 
 main().catch(console.error);

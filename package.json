@@ -1,6 +1,6 @@
 {
   "name": "smallestai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official node SDK for Smallest AI",
   "author": "Smallest AI",
   "repository": {
@@ -19,6 +19,9 @@
   "license": "Unlicense",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
+  "files": [
+    "**/*"
+  ],
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build"

@@ -42,7 +42,7 @@ async function save(response: AxiosResponse) {
 
 describe.only('LightningLarge', () => {
   const configuration = new Configuration({
-    accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2UyNmI5NjAxYTRlNTMxOWU5OTJjYWMiLCJpYXQiOjE3NDI4OTE5MjZ9.tu78sI2Pg3e7_-ylG78jggjjWrJGA2iI94C_7JG_dUc',
+    accessToken: process.env.SMALLEST_API_KEY,
     basePath: 'https://waves-api.smallest.ai'
   });
 

@@ -84,7 +84,7 @@ export class Configuration {
         this.apiKey = param.apiKey;
         this.username = param.username;
         this.password = param.password;
-        this.accessToken = param.accessToken;
+        this.accessToken = param.accessToken || process.env.SMALLEST_API_KEY;
         this.basePath = param.basePath;
         this.serverIndex = param.serverIndex;
         this.baseOptions = {

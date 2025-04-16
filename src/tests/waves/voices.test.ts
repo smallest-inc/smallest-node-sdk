@@ -7,7 +7,6 @@ import type { JSONSchemaType } from 'ajv';
 
 describe('Voices', () => {
   const configuration = new Configuration({
-    accessToken: process.env.SMALLEST_API_KEY,
     basePath: 'https://waves-api.smallest.ai'
   });
 

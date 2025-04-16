@@ -1,0 +1,37 @@
+{
+  "name": "smallestai",
+  "version": "1.0.0",
+  "description": "Official node SDK for Smallest AI",
+  "author": "Smallest AI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smallest-inc/smallest-node-sdk.git"
+  },
+  "keywords": [
+    "typescript",
+    "smallestai",
+    "voice agents",
+    "text-to-speech",
+    "tts",
+    "atoms",
+    "waves"
+  ],
+  "license": "Unlicense",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.6.1",
+    "wavefile": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "ajv": "^8.17.1",
+    "eventsource-parser": "^3.0.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}
